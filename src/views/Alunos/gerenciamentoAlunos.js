@@ -48,7 +48,7 @@ const GerenciamentoAlunos = props => {
 
   function handleUpdate(newData) {
     axios
-      .put("https://demo4838524.mockable.io/create-alunos", {
+      .put("https://demo4838524.mockable.io/update-alunos", {
         "id": newData.id,
         "cpf": newData.cpf,
         "matricula": newData.matricula,
@@ -78,11 +78,11 @@ const GerenciamentoAlunos = props => {
         title="Gerenciamento de Alunos"
         columns={[
           { title: 'Id', field: 'id' },
-          { title: 'cpf', field: 'cpf' },
-          { title: 'matricula', field: 'matricula', type: 'numerico' },
-          { title: 'nome', field: 'nome' },
-          { title: 'endereco', field: 'idEndereco' },
-          { title: 'curso', field: 'curso' }
+          { title: 'CPF', field: 'cpf' },
+          { title: 'Matrícula', field: 'matricula', type: 'numeric' },
+          { title: 'Nome', field: 'nome' },
+          { title: 'Endereço', field: 'idEndereco' },
+          { title: 'Curso', field: 'curso' }
         ]}
         data={data}
         editable={{
