@@ -5,29 +5,47 @@ import MaterialTable from "material-table";
 const GerenciamentoProfessores = props => {
   const { useState, useEffect } = React;
 
-  const [data, setData] = useState([
-  ]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     handleClick();
   }, []);
 
   function handleClick() {
-    axios
-      .get("https://demo4838524.mockable.io/professores")
+    axios.get("https://demo6247081.mockable.io/enderecos")
       .then(response => {
-        const professores = response.data.lista.map(c => {
+        const enderecos = response.data.lista.map(c => {
           return {
             id: c.id,
-            matricula: c.matricula,
-            nome: c.nome,
-            curso: c.curso,
-            idEndereco: c.idEndereco
+            bairro: c.bairro,
+            rua: c.rua,
+            cidade: c.cidade,
+            estado: c.estado,
+            numero: c.numero,
+            complemento: c.complemento
           };
         });
-        setData(professores);
+
+        axios.get("https://demo4838524.mockable.io/professores")
+          .then(response => {
+            const professores = response.data.lista.map(c => {
+              return {
+                id: c.id,
+                matricula: c.matricula,
+                nome: c.nome,
+                curso: c.curso,
+                idEndereco: c.idEndereco
+              };
+            });
+            const professoresComEndereco = professores.map(professor => {
+              const endereco = enderecos.find(end => end.id == professor.idEndereco);
+              return { ...professor, idEndereco: `${endereco.rua}, ${endereco.bairro}, ${endereco.cidade} - N° ${endereco.numero}` };
+            });
+            setData(professoresComEndereco);
+          })
+        .catch(error => console.log(error));
       })
-      .catch(error => console.log(error));
+    .catch(error => console.log(error));
   }
 
   function handleCreate(newData) {
@@ -78,7 +96,7 @@ const GerenciamentoProfessores = props => {
           { title: 'Matrícula', field: 'matricula', type: 'numeric' },
           { title: 'Nome', field: 'nome' },
           { title: 'Curso', field: 'curso' },
-          { title: 'Endereço', field: 'idEndereco' }
+          { title: 'Endereço', field: 'idEndereco' },
         ]}
         data={data}
         editable={{

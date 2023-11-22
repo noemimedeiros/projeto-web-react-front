@@ -13,22 +13,41 @@ const GerenciamentoAlunos = props => {
   }, []);
 
   function handleClick() {
-    axios
-      .get("https://demo4838524.mockable.io/alunos")
+    axios.get("https://demo6247081.mockable.io/enderecos")
       .then(response => {
-        const alunos = response.data.lista.map(c => {
+        const enderecos = response.data.lista.map(c => {
           return {
             id: c.id,
-            cpf: c.cpf,
-            matricula: c.matricula,
-            nome: c.nome,
-            idEndereco: c.idEndereco,
-            curso: c.curso
+            bairro: c.bairro,
+            rua: c.rua,
+            cidade: c.cidade,
+            estado: c.estado,
+            numero: c.numero,
+            complemento: c.complemento
           };
         });
-        setData(alunos);
+
+        axios.get("https://demo4838524.mockable.io/alunos")
+          .then(response => {
+            const alunos = response.data.lista.map(c => {
+              return {
+                id: c.id,
+                cpf: c.cpf,
+                matricula: c.matricula,
+                nome: c.nome,
+                idEndereco: c.idEndereco,
+                curso: c.curso
+              };
+            });
+            const alunosComEndereco = alunos.map(aluno => {
+              const endereco = enderecos.find(end => end.id == aluno.idEndereco);
+              return { ...aluno, idEndereco: `${endereco.rua}, ${endereco.bairro}, ${endereco.cidade} - N° ${endereco.numero}` };
+            });
+            setData(alunosComEndereco);
+          })
+        .catch(error => console.log(error));
       })
-      .catch(error => console.log(error));
+    .catch(error => console.log(error));
   }
 
   function handleCreate(newData) {

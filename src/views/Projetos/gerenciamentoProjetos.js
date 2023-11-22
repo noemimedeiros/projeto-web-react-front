@@ -13,26 +13,63 @@ const GerenciamentoProjetos = props => {
   }, []);
 
   function handleClick() {
-    axios
-      .get("https://demo4838524.mockable.io/projetos")
+    axios.get("https://demo4838524.mockable.io/alunos")
       .then(response => {
-        const projetos = response.data.lista.map(c => {
+        const alunos = response.data.lista.map(c => {
           return {
             id: c.id,
-            tituloProjeto: c.tituloProjeto,
-            areaProjeto: c.areaProjeto,
-            resumo: c.resumo,
-            palavraChave1: c.palavraChave1,
-            palavraChave2: c.palavraChave2,
-            palavraChave3: c.palavraChave3,
-            url: c.url,
-            idProfessorResponsavel: c.idProfessorResponsavel,
-            idAlunoParticipante: c.idAlunoParticipante
+            cpf: c.cpf,
+            matricula: c.matricula,
+            nome: c.nome,
+            idEndereco: c.idEndereco,
+            curso: c.curso
           };
         });
-        setData(projetos);
+
+        axios.get("https://demo4838524.mockable.io/projetos")
+          .then(response => {
+            const projetos = response.data.lista.map(c => {
+              return {
+                id: c.id,
+                tituloProjeto: c.tituloProjeto,
+                areaProjeto: c.areaProjeto,
+                resumo: c.resumo,
+                palavraChave1: c.palavraChave1,
+                palavraChave2: c.palavraChave2,
+                palavraChave3: c.palavraChave3,
+                url: c.url,
+                idProfessorResponsavel: c.idProfessorResponsavel,
+                idAlunoParticipante: c.idAlunoParticipante
+              };
+            });
+            const projetosComAlunos = projetos.map(projeto => {
+              const aluno = alunos.find(aluno => aluno.id == projeto.idAlunoParticipante);
+              return { ...projeto, idAlunoParticipante: aluno.nome };
+            });
+            
+            axios.get("https://demo4838524.mockable.io/professores")
+              .then(response => {
+                const professores = response.data.lista.map(c => {
+                  return {
+                    id: c.id,
+                    matricula: c.matricula,
+                    nome: c.nome,
+                    curso: c.curso,
+                    idEndereco: c.idEndereco
+                  };
+                });
+                const projetosComProfessores = projetosComAlunos.map(projeto => {
+                  const professor = professores.find(professor => professor.id == projeto.idProfessorResponsavel);
+                  return { ...projeto, idProfessorResponsavel: professor.nome };
+                });
+                setData(projetosComProfessores);
+              })
+            .catch(error => console.log(error));
+
+          })
+          .catch(error => console.log(error));
       })
-      .catch(error => console.log(error));
+    .catch(error => console.log(error));
   }
 
   function handleCreate(newData) {
